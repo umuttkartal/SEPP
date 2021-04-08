@@ -1,13 +1,30 @@
-/**
- * To implement
- */
-
 package shield;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.ArrayList;
+import java.lang.reflect.Type;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
+
+  private String endpoint;
+
+  // internal field only used for transmission purposes
+  final class MessagingFoodBox {
+    // a field marked as transient is skipped in marshalling/unmarshalling
+    transient List<String> contents;
+
+    String delivered_by;
+    String diet;
+    String id;
+    String name;
+  }
+
   public ShieldingIndividualClientImp(String endpoint) {
+    this.endpoint = endpoint;
   }
 
   @Override
@@ -17,7 +34,31 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   @Override
   public Collection<String> showFoodBoxes(String dietaryPreference) {
-    return null;
+    // construct the endpoint request
+    String request = "/showFoodBox?orderOption=catering&dietaryPreference=none";
+
+    // setup the response recepient
+    List<MessagingFoodBox> responseBoxes = new ArrayList<MessagingFoodBox>();
+
+    List<String> boxIds = new ArrayList<String>();
+
+    try {
+      // perform request
+      String response = ClientIO.doGETRequest(endpoint + request);
+
+      // unmarshal response
+      Type listType = new TypeToken<List<MessagingFoodBox>>() {} .getType();
+      responseBoxes = new Gson().fromJson(response, listType);
+
+      // gather required fields
+      for (MessagingFoodBox b : responseBoxes) {
+        boxIds.add(b.id);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    return boxIds;
   }
 
   // **UPDATE2** REMOVED PARAMETER
