@@ -29,6 +29,7 @@ Returns: registered new / already registered
 
 Returns: true or false
 
+
 7) curl 'localhost:5000/registerSupermarket?business_name=catering1&postcode=eh0111'
 
 Returns: registered new / already registered
