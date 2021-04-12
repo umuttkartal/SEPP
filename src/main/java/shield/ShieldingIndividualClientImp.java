@@ -78,7 +78,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   @Override
   public boolean registerShieldingIndividual(String CHI) {
-    String request = String.format("cancelOrder?order_id=%s", CHI);
+    String request = String.format("/registerShieldingIndividual?CHI=%s", CHI);
     boolean isSuccessful = false;
 
     try {
@@ -105,7 +105,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   // Can do a better job of showing food boxes - show more detail? format it?
   @Override
   public Collection<String> showFoodBoxes(String dietaryPreference) {
-    String request = String.format("/showFoodBox?orderOption=%s&dietaryPreference=%s", "none", dietaryPreference);
+    String request = String.format("/showFoodBox?orderOption=catering&dietaryPreference=%s", dietaryPreference);
     List<MessagingFoodBox> responseBoxes = new ArrayList<MessagingFoodBox>();
     List<String> boxIds = new ArrayList<String>();
 
@@ -130,7 +130,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   @Override
   public boolean placeOrder() {
     String[] caterer = this.foodBox.delivered_by.split(",");
-    String request = String.format("placeOrder?individual_id=%s&catering_business_name=%s&catering_postcode=%s", this.CHI, caterer[0], caterer[1]);
+    String request = String.format("/placeOrder?individual_id=%s&catering_business_name=%s&catering_postcode=%s", this.CHI, caterer[0], caterer[1]);
     String data = gson.toJson(this.foodBox);
     Order order = new Order();
 
@@ -154,7 +154,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   @Override
   public boolean editOrder(int orderNumber) {
-    String request = String.format("editOrder?order_id=%d", orderNumber);
+    String request = String.format("/editOrder?order_id=%d", orderNumber);
     String data = gson.toJson(this.foodBox);
     boolean isSuccessful = false;
 
@@ -170,7 +170,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   @Override
   public boolean cancelOrder(int orderNumber) {
-    String request = String.format("cancelOrder?order_id=%d", orderNumber);
+    String request = String.format("/cancelOrder?order_id=%d", orderNumber);
     boolean isSuccessful = false;
 
     try {
@@ -188,7 +188,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   //Add functionality for updating affected order if status has changed (maybe new method?)
   public int requestOrderStatus(int orderNumber) {
-    String request = String.format("requestStatus?order_id=%d", orderNumber);
+    String request = String.format("/requestStatus?order_id=%d", orderNumber);
     int status = -1;
 
     try {
@@ -204,7 +204,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   // **UPDATE**
   @Override
   public Collection<String> getCateringCompanies() {
-    String request = "getCaterers";
+    String request = "/getCaterers";
     List<String> caterers = new ArrayList<>();
 
     try {
@@ -221,7 +221,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   // **UPDATE** //OVERLOAD HERE POSSIBLY TO HANDLE NAMES AS WELL AS POSTCODES?
   @Override
   public float getDistance(String postCode1, String postCode2) {
-    String request = String.format("distance?postcode1=%s,postcode2=%s", postCode1, postCode2);
+    String request = String.format("/distance?postcode1=%s,postcode2=%s", postCode1, postCode2);
     float distance = Float.POSITIVE_INFINITY;
 
     try {
@@ -349,7 +349,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   // add constants for status
   @Override
   public String getStatusForOrder(int orderNumber) {
-    String request = String.format("requestStatus?order_id=%s", orderNumber);
+    String request = String.format("/requestStatus?order_id=%s", orderNumber);
     String status = "No status could be found for order number";
 
     try {

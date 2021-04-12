@@ -19,7 +19,7 @@ public class SupermarketClientImp implements SupermarketClient {
 
   @Override
   public boolean registerSupermarket(String name, String postCode) {
-    String request = String.format("registerSupermarket?business_name=%s&postcode=%s", name, postCode);
+    String request = String.format("/registerSupermarket?business_name=%s&postcode=%s", name, postCode);
     boolean isSuccessful = false;
 
     try {
@@ -41,7 +41,7 @@ public class SupermarketClientImp implements SupermarketClient {
   // **UPDATE2** ADDED METHOD
   @Override
   public boolean recordSupermarketOrder(String CHI, int orderNumber) {
-    String request = String.format("recordSupermarketOrder?individual_id=%s&order_number=%d&supermarket_business_name=%s&supermarket_postcode=%s", CHI, orderNumber, this.name, this.postCode);
+    String request = String.format("/recordSupermarketOrder?individual_id=%s&order_number=%d&supermarket_business_name=%s&supermarket_postcode=%s", CHI, orderNumber, this.name, this.postCode);
     boolean isSuccessful = false;
 
     try {
@@ -57,7 +57,7 @@ public class SupermarketClientImp implements SupermarketClient {
   // **UPDATE**
   @Override
   public boolean updateOrderStatus(int orderNumber, String status) {
-    String request = String.format("updateSupermarketOrderStatus?order_id=%d&newStatus=%s", orderNumber, status);
+    String request = String.format("/updateSupermarketOrderStatus?order_id=%d&newStatus=%s", orderNumber, status);
     boolean isSuccessful = false;
 
     try {

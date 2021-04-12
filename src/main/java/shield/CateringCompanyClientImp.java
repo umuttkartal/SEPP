@@ -19,7 +19,7 @@ public class CateringCompanyClientImp implements CateringCompanyClient {
 
   @Override
   public boolean registerCateringCompany(String name, String postCode) {
-      String request = String.format("registerCateringCompany?business_name=%s&postcode=%s", name, postCode);
+      String request = String.format("/registerCateringCompany?business_name=%s&postcode=%s", name, postCode);
       boolean isSuccessful = false;
 
       try {
@@ -40,7 +40,7 @@ public class CateringCompanyClientImp implements CateringCompanyClient {
 
   @Override
   public boolean updateOrderStatus(int orderNumber, String status) {
-      String request = String.format("updateOrderStatus?order_id=%d&newStatus=%s", orderNumber, status);
+      String request = String.format("/updateOrderStatus?order_id=%d&newStatus=%s", orderNumber, status);
       boolean isSuccessful = false;
 
       try {
