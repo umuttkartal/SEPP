@@ -16,6 +16,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   private int order_id;
   private static final Gson gson = new Gson();
 
+  // Nested, might not work
   final class Item {
     String id;
     String name;
@@ -154,8 +155,8 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   @Override
   public Collection<String> getCateringCompanies() {
     String request = "getCaterers";
-    List<String> caterers = new ArrayList<String>();
-    List<String> boxIds = new ArrayList<String>();
+    List<String> caterers = new ArrayList<>();
+    List<String> boxIds = new ArrayList<>();
 
     try {
       String response = ClientIO.doGETRequest(endpoint + request);
