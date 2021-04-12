@@ -11,7 +11,7 @@ public class CateringCompanyClientImp implements CateringCompanyClient {
   private String endpoint;
   private String name;
   private String postCode;
-  private boolean isRegistered;
+  private boolean isRegistered = false;
 
   public CateringCompanyClientImp(String endpoint) {
     this.endpoint = endpoint;
@@ -40,7 +40,7 @@ public class CateringCompanyClientImp implements CateringCompanyClient {
 
   @Override
   public boolean updateOrderStatus(int orderNumber, String status) {
-      String request = String.format("updateOrderStatus?order_id=%s&newStatus=%s", orderNumber, status);
+      String request = String.format("updateOrderStatus?order_id=%d&newStatus=%s", orderNumber, status);
       boolean isSuccessful = false;
 
       try {

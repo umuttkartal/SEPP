@@ -68,7 +68,7 @@ public interface ShieldingIndividualClientEndpoints {
   * @param orderNumber the order number
   * @return true if the operation occurred correctly
   */
-  public boolean requestOrderStatus(int orderNumber);
+  public int requestOrderStatus(int orderNumber);
 
   // **UPDATE**
   /**

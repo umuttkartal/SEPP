@@ -89,8 +89,8 @@ public class DummyShieldingIndividualClientImp implements ShieldingIndividualCli
   }
 
   @Override
-  public boolean requestOrderStatus(int orderNumber) {
-    return false;
+  public int requestOrderStatus(int orderNumber) {
+    return 0;
   }
 
   // **UPDATE**
