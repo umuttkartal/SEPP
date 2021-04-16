@@ -24,6 +24,7 @@ public class CateringCompanyClientImpTest {
 
   private Properties clientProps;
   private CateringCompanyClient client;
+  private ShieldingIndividualClientImp shieldedInd;
 
   private Properties loadProperties(String propsFilename) {
     ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -44,6 +45,7 @@ public class CateringCompanyClientImpTest {
     clientProps = loadProperties(clientPropsFilename);
 
     client = new CateringCompanyClientImp(clientProps.getProperty("endpoint"));
+    shieldedInd = new ShieldingIndividualClientImp(clientProps.getProperty("endpoint"));
   }
 
 
@@ -56,5 +58,6 @@ public class CateringCompanyClientImpTest {
     assertTrue(client.registerCateringCompany(name, postCode));
     assertTrue(client.isRegistered());
     assertEquals(client.getName(), name);
+    assertEquals(client.getPostCode(), postCode);
   }
 }

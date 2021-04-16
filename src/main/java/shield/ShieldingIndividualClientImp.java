@@ -237,7 +237,20 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 // TODO: WRITE FILE OR LIST TO KEEP REGISTERED IDs
   @Override
   public boolean isRegistered() {
-    return this.isRegistered;
+    String request = "/registerShieldingIndividual?CHI=" + this.CHI;
+    try {
+      // perform request
+      String response = ClientIO.doGETRequest(endpoint + request);
+      if(response.equals("already registered")){
+        return true;
+      }else{
+        return false;
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      return false;
+    }
   }
 
   @Override

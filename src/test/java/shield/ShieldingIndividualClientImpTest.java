@@ -5,15 +5,11 @@
 package shield;
 
 import org.junit.jupiter.api.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Collection;
-import java.util.Properties;
-import java.time.LocalDateTime;
+import java.util.*;
 import java.io.InputStream;
 
-import java.util.Random;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -55,5 +51,21 @@ public class ShieldingIndividualClientImpTest {
     assertTrue(client.registerShieldingIndividual(chi));
     assertTrue(client.isRegistered());
     assertEquals(client.getCHI(), chi);
+  }
+
+  @Test
+  public void testGetCateringCompanies(){
+    List<String> expectedResult = new LinkedList<String>();
+    expectedResult.add("TastyFood");
+    expectedResult.add("Yummy");
+    assertEquals(client.getCateringCompanies(),expectedResult);
+  }
+
+  @Test
+  public void testGetItemQuantityForFoodBox(){
+    assertEquals(client.getItemQuantityForFoodBox(1, 1), 1);
+    assertEquals(client.getItemQuantityForFoodBox(3, 2), 1);
+    assertEquals(client.getItemQuantityForFoodBox(4, 3), 2);
+    assertThrows(AssertionError.class, () -> {client.getItemQuantityForFoodBox(2,-3);});
   }
 }

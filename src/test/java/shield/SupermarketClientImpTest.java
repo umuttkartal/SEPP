@@ -24,6 +24,7 @@ public class SupermarketClientImpTest {
 
   private Properties clientProps;
   private SupermarketClient client;
+  private ShieldingIndividualClientImp shieldedInd;
 
   private Properties loadProperties(String propsFilename) {
     ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -44,6 +45,7 @@ public class SupermarketClientImpTest {
     clientProps = loadProperties(clientPropsFilename);
 
     client = new SupermarketClientImp(clientProps.getProperty("endpoint"));
+    shieldedInd = new ShieldingIndividualClientImp(clientProps.getProperty("endpoint"));
   }
 
 
@@ -56,5 +58,21 @@ public class SupermarketClientImpTest {
     assertTrue(client.registerSupermarket(name, postCode));
     assertTrue(client.isRegistered());
     assertEquals(client.getName(), name);
+    assertEquals(client.getPostCode(), postCode);
+  }
+
+  @Test
+  public void testSupermarketOrderFlow() {
+    Random rand = new Random();
+    String CHI = String.valueOf(rand.nextInt(10000));
+    int orderNumber = rand.nextInt(10000);
+    String status = String.valueOf(rand.nextInt(10000));
+    String name = String.valueOf(rand.nextInt(10000));
+    String postCode = String.valueOf(rand.nextInt(10000));
+    shieldedInd.registerShieldingIndividual(CHI);
+
+    assertTrue(client.registerSupermarket(name, postCode));
+    assertTrue(client.recordSupermarketOrder(CHI, orderNumber));
+    assertTrue(client.updateOrderStatus(orderNumber, status));
   }
 }
