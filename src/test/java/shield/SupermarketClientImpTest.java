@@ -5,8 +5,6 @@
 package shield;
 
 import org.junit.jupiter.api.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.Properties;
@@ -14,6 +12,8 @@ import java.time.LocalDateTime;
 import java.io.InputStream;
 
 import java.util.Random;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -53,7 +53,7 @@ public class SupermarketClientImpTest {
   public void testSupermarketNewRegistration() {
     Random rand = new Random();
     String name = String.valueOf(rand.nextInt(10000));
-    String postCode = String.valueOf(rand.nextInt(10000));
+    String postCode = "EH9_1LT";
 
     assertTrue(client.registerSupermarket(name, postCode));
     assertTrue(client.isRegistered());
@@ -62,17 +62,31 @@ public class SupermarketClientImpTest {
   }
 
   @Test
+  public void testIsRegistered(){
+    Random rand = new Random();
+    String name = String.valueOf(rand.nextInt(10000));
+    String postCode = "EH9_1LT";
+    assertTrue(client.registerSupermarket(name, postCode));
+    assertTrue(client.isRegistered());
+    assertFalse(client.registerSupermarket(name, postCode));
+  }
+
+  @Test
   public void testSupermarketOrderFlow() {
     Random rand = new Random();
     String CHI = String.valueOf(rand.nextInt(10000));
     int orderNumber = rand.nextInt(10000);
-    String status = String.valueOf(rand.nextInt(10000));
+    String statusPacked = "packed";
+    String statusDispatched = "dispatched";
+    String statusDelivered = "delivered";
     String name = String.valueOf(rand.nextInt(10000));
     String postCode = String.valueOf(rand.nextInt(10000));
     shieldedInd.registerShieldingIndividual(CHI);
 
     assertTrue(client.registerSupermarket(name, postCode));
     assertTrue(client.recordSupermarketOrder(CHI, orderNumber));
-    assertTrue(client.updateOrderStatus(orderNumber, status));
+    assertTrue(client.updateOrderStatus(orderNumber, statusPacked));
+    assertTrue(client.updateOrderStatus(orderNumber, statusDispatched));
+    assertTrue(client.updateOrderStatus(orderNumber, statusDelivered));
   }
 }

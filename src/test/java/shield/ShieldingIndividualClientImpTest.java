@@ -53,13 +53,6 @@ public class ShieldingIndividualClientImpTest {
     assertEquals(client.getCHI(), chi);
   }
 
-  @Test
-  public void testGetCateringCompanies(){
-    List<String> expectedResult = new LinkedList<String>();
-    expectedResult.add("TastyFood");
-    expectedResult.add("Yummy");
-    assertEquals(client.getCateringCompanies(),expectedResult);
-  }
 
   @Test
   public void testGetItemQuantityForFoodBox(){
@@ -67,5 +60,57 @@ public class ShieldingIndividualClientImpTest {
     assertEquals(client.getItemQuantityForFoodBox(3, 2), 1);
     assertEquals(client.getItemQuantityForFoodBox(4, 3), 2);
     assertThrows(AssertionError.class, () -> {client.getItemQuantityForFoodBox(2,-3);});
+    assertThrows(AssertionError.class, () -> {client.getItemQuantityForFoodBox(-3,1);});
   }
+
+  @Test
+  public void testGetDietaryPreferenceForFoodBox(){
+    assertEquals("none", client.getDietaryPreferenceForFoodBox(1));
+    assertEquals("vegan", client.getDietaryPreferenceForFoodBox(5));
+  }
+
+  @Test
+  public void testGetItemsNumberForFoodBox(){
+    assertEquals(3, client.getItemsNumberForFoodBox(1));
+    assertEquals(3, client.getItemsNumberForFoodBox(3));
+    assertEquals(4, client.getItemsNumberForFoodBox(4));
+  }
+
+  @Test
+  public void testGetItemIdsForFoodBox(){
+    List<Integer> expectedResult = new ArrayList<Integer>();
+    expectedResult.add(1);
+    expectedResult.add(3);
+    expectedResult.add(7);
+    assertEquals(expectedResult, client.getItemIdsForFoodBox(2));
+  }
+
+  @Test
+  public void testShowFoodBoxes(){
+    List<String> expectedResult = new ArrayList<String>();
+    assertEquals(expectedResult, client.showFoodBoxes("wrongDiet"));
+    expectedResult.add("5");
+    assertEquals(expectedResult, client.showFoodBoxes("vegan"));
+    expectedResult.set(0, "2");
+    assertEquals(expectedResult, client.showFoodBoxes("pollotarian"));
+    expectedResult.set(0, "1");
+    expectedResult.add("3");
+    expectedResult.add("4");
+    assertEquals(expectedResult, client.showFoodBoxes("none"));
+  }
+
+  @Test
+  public void testPlaceOrder(){
+    Random rand = new Random();
+    String chi = String.valueOf(rand.nextInt(10000));
+    assertTrue(client.registerShieldingIndividual(chi));
+    assertTrue(client.isRegistered());
+    assertEquals(chi, client.getCHI());
+    client.pickFoodBox(1);
+    assertTrue(client.placeOrder());
+    client.changeItemQuantityForPickedFoodBox(2,1);
+    assertTrue(client.editOrder(2));
+    assertTrue(client.cancelOrder(2));
+  }
+
 }

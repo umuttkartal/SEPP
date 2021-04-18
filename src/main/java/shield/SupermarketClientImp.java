@@ -11,6 +11,7 @@ public class SupermarketClientImp implements SupermarketClient {
   private String endpoint;
   private String name;
   private String postCode;
+  private String status;
   private boolean isRegistered = false;
 
   public SupermarketClientImp(String endpoint) {
@@ -63,6 +64,9 @@ public class SupermarketClientImp implements SupermarketClient {
     try {
       String response = ClientIO.doGETRequest(endpoint + request);
       isSuccessful = Boolean.parseBoolean(response);
+      if(isSuccessful) {
+        this.status = status;
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }

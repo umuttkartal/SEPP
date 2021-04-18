@@ -5,8 +5,6 @@
 package shield;
 
 import org.junit.jupiter.api.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.Properties;
@@ -14,6 +12,8 @@ import java.time.LocalDateTime;
 import java.io.InputStream;
 
 import java.util.Random;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -59,5 +59,54 @@ public class CateringCompanyClientImpTest {
     assertTrue(client.isRegistered());
     assertEquals(client.getName(), name);
     assertEquals(client.getPostCode(), postCode);
+  }
+
+  @Test
+  public void testAlreadyRegistered() {
+    Random rand = new Random();
+    String name = String.valueOf(rand.nextInt(10000));
+    String postCode = "EH9_1LT";
+
+    assertTrue(client.registerCateringCompany(name, postCode));
+    assertTrue(client.isRegistered());
+    assertFalse(client.registerCateringCompany(name, postCode));
+  }
+
+  @Test
+  public void testCateringCompanyOrderFlow() {
+    Random rand = new Random();
+    String CHI = "1105871234";
+    int orderNumber = 0;
+    String statusPacked = "packed";
+    String statusDispatched = "dispatched";
+    String statusDelivered = "delivered";
+    String name = String.valueOf(rand.nextInt(10000));
+    String postCode = "EH16_5AY";
+    shieldedInd.registerShieldingIndividual(CHI);
+    client.registerCateringCompany(name, postCode);
+    shieldedInd.pickFoodBox(2);
+    shieldedInd.placeOrder();
+
+    assertTrue(client.updateOrderStatus(orderNumber, statusPacked));
+    assertTrue(client.updateOrderStatus(orderNumber, statusDispatched));
+    assertTrue(client.updateOrderStatus(orderNumber, statusDelivered));
+  }
+
+  @Test
+  public void testSupermarketOrderWrongStatusOrder() {
+    Random rand = new Random();
+    String CHI = "1105871234";
+    int orderNumber = rand.nextInt(10000);
+    String statusPacked = "packed";
+    String statusFake = "fake";
+    String name = String.valueOf(rand.nextInt(10000));
+    String postCode = "EH16_5AY";
+    shieldedInd.registerShieldingIndividual(CHI);
+    client.registerCateringCompany(name, postCode);
+    shieldedInd.pickFoodBox(2);
+    shieldedInd.placeOrder();
+
+    assertTrue(client.updateOrderStatus(orderNumber, statusPacked));
+    assertFalse(client.updateOrderStatus(orderNumber, statusFake));
   }
 }
