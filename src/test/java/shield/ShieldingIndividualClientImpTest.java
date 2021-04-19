@@ -82,6 +82,7 @@ public class ShieldingIndividualClientImpTest {
     expectedResult.add(1);
     expectedResult.add(3);
     expectedResult.add(7);
+    System.out.println(client.getItemIdsForFoodBox(2));
     assertEquals(expectedResult, client.getItemIdsForFoodBox(2));
   }
 

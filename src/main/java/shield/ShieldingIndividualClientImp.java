@@ -35,17 +35,17 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   //Surely should convert ids to ints not strings?
   final class Item {
-    String id;
+    int id;
     String name;
     String quantity;
   }
 
   final class MessagingFoodBox {
-    transient List<Item> contents;
+    List<Item> contents;
 
     String delivered_by;
     String diet;
-    String id;
+    int id;
     String name;
   }
 
@@ -115,7 +115,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
       responseBoxes = gson.fromJson(response, listType);
 
       for (MessagingFoodBox b : responseBoxes) {
-        boxIds.add(b.id);
+        boxIds.add(String.valueOf(b.id));
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -260,13 +260,14 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   @Override
   public int getFoodBoxNumber() {
-    return Integer.parseInt(this.foodBox.id);
+    return this.foodBox.id;
   }
 
   @Override
   public String getDietaryPreferenceForFoodBox(int foodBoxId) {
-    for (MessagingFoodBox foodBox : this.foodBoxes) {
-      if (Integer.parseInt(foodBox.id) == foodBoxId) {
+    List<MessagingFoodBox> allFoodBoxes = getAllFoodBoxes();
+    for (MessagingFoodBox foodBox : allFoodBoxes) {
+      if (foodBox.id == foodBoxId) {
         return foodBox.diet;
       }
     }
@@ -276,7 +277,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   @Override
   public int getItemsNumberForFoodBox(int foodBoxId) {
     for (MessagingFoodBox foodBox : this.foodBoxes) {
-      if (Integer.parseInt(foodBox.id) == foodBoxId) {
+      if (foodBox.id == foodBoxId) {
         return foodBox.contents.size();
       }
     }
@@ -285,13 +286,14 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   @Override
   public Collection<Integer> getItemIdsForFoodBox(int foodBoxId) {
+    List<MessagingFoodBox> allFoodBoxes = getAllFoodBoxes();
     List<Integer> item_ids = new ArrayList<Integer>();
-    for (MessagingFoodBox foodBox : this.foodBoxes) {
-      if (Integer.parseInt(foodBox.id) == foodBoxId) {
+    for (MessagingFoodBox foodBox : allFoodBoxes) {
+      if (foodBox.id == foodBoxId) {
         for (Item item : foodBox.contents) {
-          item_ids.add(Integer.parseInt(item.id));
-          return item_ids;
+          item_ids.add(item.id);
         }
+        return item_ids;
       }
     }
     return item_ids;
@@ -300,9 +302,9 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   @Override
   public String getItemNameForFoodBox(int itemId, int foodBoxId) {
     for (MessagingFoodBox foodBox : this.foodBoxes) {
-      if (Integer.parseInt(foodBox.id) == foodBoxId) {
+      if (foodBox.id == foodBoxId) {
         for (Item item : foodBox.contents) {
-          if (Integer.parseInt(item.id) == itemId) {
+          if (item.id == itemId) {
             return item.name;
           }
         }
@@ -314,9 +316,9 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   @Override
   public int getItemQuantityForFoodBox(int itemId, int foodBoxId) {
     for (MessagingFoodBox foodBox : this.foodBoxes) {
-      if (Integer.parseInt(foodBox.id) == foodBoxId) {
+      if (foodBox.id == foodBoxId) {
         for (Item item : foodBox.contents) {
-          if (Integer.parseInt(item.id) == itemId) {
+          if (item.id == itemId) {
             return Integer.parseInt(item.quantity);
           }
         }
@@ -328,7 +330,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   @Override
   public boolean pickFoodBox(int foodBoxId) {
     for (MessagingFoodBox foodBox : this.foodBoxes) {
-      if (Integer.parseInt(foodBox.id) == foodBoxId) {
+      if (foodBox.id == foodBoxId) {
         this.foodBox = foodBox;
         return true;
       }
@@ -339,7 +341,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   @Override
   public boolean changeItemQuantityForPickedFoodBox(int itemId, int quantity) {
     for (Item item : this.foodBox.contents) {
-      if (Integer.parseInt(item.id) == itemId) {
+      if (item.id == itemId) {
         if (quantity > Integer.parseInt(item.quantity)) {
           item.quantity = Integer.toString(quantity);
           return true;
@@ -382,7 +384,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
     for (Order order : this.orders) {
       if (order.id == orderNumber) {
         for (Item item : order.foodBox.contents) {
-          item_ids.add(Integer.parseInt(item.id));
+          item_ids.add(item.id);
           return item_ids;
         }
       }
@@ -396,7 +398,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
     for (Order order : this.orders) {
       if (order.id == orderNumber) {
         for (Item item : order.foodBox.contents) {
-          if (itemId == Integer.parseInt(item.id)) {
+          if (itemId == item.id) {
             return item.name;
           }
         }
@@ -410,7 +412,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
     for (Order order : this.orders) {
       if (order.id == orderNumber) {
         for (Item item : order.foodBox.contents) {
-          if (itemId == Integer.parseInt(item.id)) {
+          if (itemId == item.id) {
             return Integer.parseInt(item.quantity);
           }
         }
@@ -450,4 +452,21 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
     return closest_caterer;
   }
+
+  private List<MessagingFoodBox> getAllFoodBoxes(){
+    String request = "/showFoodBox?orderOption=catering";
+    // setup the response recipient
+    List<MessagingFoodBox> responseBoxes = new ArrayList<MessagingFoodBox>();
+    try {
+      // perform request
+      String response = ClientIO.doGETRequest(endpoint + request);
+      // unmarshal response
+      Type listType = new TypeToken<List<MessagingFoodBox>>() {} .getType();
+      responseBoxes = new Gson().fromJson(response, listType);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return responseBoxes;
+  }
+
 }
