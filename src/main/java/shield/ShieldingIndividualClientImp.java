@@ -455,12 +455,9 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   private List<MessagingFoodBox> getAllFoodBoxes(){
     String request = "/showFoodBox?orderOption=catering";
-    // setup the response recipient
     List<MessagingFoodBox> responseBoxes = new ArrayList<MessagingFoodBox>();
     try {
-      // perform request
       String response = ClientIO.doGETRequest(endpoint + request);
-      // unmarshal response
       Type listType = new TypeToken<List<MessagingFoodBox>>() {} .getType();
       responseBoxes = new Gson().fromJson(response, listType);
     } catch (Exception e) {
