@@ -38,6 +38,15 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
     int id;
     String name;
     String quantity;
+
+    @Override
+    public String toString() {
+      return "Item{" +
+              "id=" + id +
+              ", name='" + name + '\'' +
+              ", quantity='" + quantity + '\'' +
+              '}';
+    }
   }
 
   final class MessagingFoodBox {
@@ -47,6 +56,17 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
     String diet;
     int id;
     String name;
+
+    @Override
+    public String toString() {
+      return "MessagingFoodBox{" +
+              "contents=" + contents +
+              ", delivered_by='" + delivered_by + '\'' +
+              ", diet='" + diet + '\'' +
+              ", id=" + id +
+              ", name='" + name + '\'' +
+              '}';
+    }
   }
 
   // What happens if they want to order again but fails because order is late, cancelled etc due to lateness?
@@ -57,6 +77,16 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
     MessagingFoodBox foodBox;
     int status;
     String date;
+
+    @Override
+    public String toString() {
+      return "Order{" +
+              "id=" + id +
+              ", foodBox=" + foodBox +
+              ", status=" + status +
+              ", date='" + date + '\'' +
+              '}';
+    }
   }
 
   //private last order date
@@ -66,11 +96,12 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   public ShieldingIndividualClientImp(String endpoint) {
     this.endpoint = endpoint;
-    String request = "/showFoodBox?orderOption=catering&dietaryPreference=none";
+    String request = "/showFoodBox";
     try {
       String response = ClientIO.doGETRequest(endpoint + request);
       Type listType = new TypeToken<List<MessagingFoodBox>>() {} .getType();
       this.foodBoxes = gson.fromJson(response, listType);
+      System.out.println(this.foodBoxes);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -265,7 +296,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   @Override
   public String getDietaryPreferenceForFoodBox(int foodBoxId) {
-    List<MessagingFoodBox> allFoodBoxes = getAllFoodBoxes();
+    List<MessagingFoodBox> allFoodBoxes = this.foodBoxes;
     for (MessagingFoodBox foodBox : allFoodBoxes) {
       if (foodBox.id == foodBoxId) {
         return foodBox.diet;
@@ -286,7 +317,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   @Override
   public Collection<Integer> getItemIdsForFoodBox(int foodBoxId) {
-    List<MessagingFoodBox> allFoodBoxes = getAllFoodBoxes();
+    List<MessagingFoodBox> allFoodBoxes = this.foodBoxes;
     List<Integer> item_ids = new ArrayList<Integer>();
     for (MessagingFoodBox foodBox : allFoodBoxes) {
       if (foodBox.id == foodBoxId) {
@@ -332,6 +363,9 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
     for (MessagingFoodBox foodBox : this.foodBoxes) {
       if (foodBox.id == foodBoxId) {
         this.foodBox = foodBox;
+        System.out.println(this.foodBox.delivered_by);
+        this.foodBox.delivered_by = getClosestCateringCompany();
+        System.out.println(this.foodBox.delivered_by);
         return true;
       }
     }
