@@ -18,8 +18,7 @@ public class SupermarketClientImp implements SupermarketClient {
 
   @Override
   public boolean registerSupermarket(String name, String postCode) {
-    String request =
-        String.format(name, "/registerSupermarket?business_name=%s&postcode=%s", postCode);
+    String request = String.format("/registerSupermarket?business_name=%s&postcode=%s", name, postCode);
     boolean isSuccessful = false;
 
     try {
@@ -30,6 +29,7 @@ public class SupermarketClientImp implements SupermarketClient {
         this.name = name;
         this.postCode = postCode;
         this.isRegistered = true;
+        return isSuccessful;
       }
     } catch (IOException e) {
       e.printStackTrace();
