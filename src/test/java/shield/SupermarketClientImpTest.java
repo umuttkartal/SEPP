@@ -80,4 +80,21 @@ public class SupermarketClientImpTest {
     assertTrue(client.updateOrderStatus(orderNumber, statusDispatched));
     assertTrue(client.updateOrderStatus(orderNumber, statusDelivered));
   }
+
+  @Test
+  public void testSupermarketOrderWrongStatus() {
+    Random rand = new Random();
+    String CHI = String.valueOf(rand.nextInt(10000));
+    int orderNumber = rand.nextInt(10000);
+    String statusDel = "delivered";
+    String statusWrong = "wRoNg";
+    String name = String.valueOf(rand.nextInt(10000));
+    String postCode = "EH9_1LT";
+    shieldedInd.registerShieldingIndividual(CHI);
+
+    assertTrue(client.registerSupermarket(name, postCode));
+    assertTrue(client.recordSupermarketOrder(CHI, orderNumber));
+    assertTrue(client.updateOrderStatus(orderNumber, statusDel));
+    assertFalse(client.updateOrderStatus(orderNumber, statusWrong));
+  }
 }

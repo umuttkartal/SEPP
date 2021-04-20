@@ -85,13 +85,11 @@ public class CateringCompanyClientImpTest {
   }
 
   @Test
-  public void testSupermarketOrderWrongStatusOrder() {
+  public void testSupermarketOrderWrongStatus() {
     Random rand = new Random();
-    String CHI = rand.nextInt(310000000) + "0";
-    // String CHI = "1105871232";
-    // int orderNumber = rand.randInt(10000); // Can't just pick any random number
-    String statusPacked = "packed";
-    String statusFake = "fake";
+    String CHI = String.valueOf(rand.nextInt(10000));
+    String statusDel = "delivered";
+    String statusWrong = "wRoNg";
     String name = String.valueOf(rand.nextInt(10000));
     String postCode = "EH16_5AY";
     shieldedInd.registerShieldingIndividual(CHI);
@@ -99,7 +97,7 @@ public class CateringCompanyClientImpTest {
     shieldedInd.pickFoodBox(2);
     shieldedInd.placeOrder();
     int orderNumber = shieldedInd.getOrderNumbers().iterator().next();
-    assertTrue(client.updateOrderStatus(orderNumber, statusPacked));
-    assertFalse(client.updateOrderStatus(orderNumber, statusFake));
+    assertTrue(client.updateOrderStatus(orderNumber, statusDel));
+    assertFalse(client.updateOrderStatus(orderNumber, statusWrong));
   }
 }
