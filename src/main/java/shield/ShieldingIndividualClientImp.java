@@ -1,105 +1,53 @@
 package shield;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.ArrayList;
-import java.lang.reflect.Type;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   // Get that weird class that stores constants to do this
 
   // Should we store unique unedited food boxes locally?
-  // Also allows reuse of functions for getting ids and the like from the box - alternatively can just store them locally
-  //and use alternative find order function
+  // Also allows reuse of functions for getting ids and the like from the box
+  // - alternatively can just store them locally
+  // and use alternative find order function
 
+  public static final int ERROR_CODE = -1;
   private static final int PLACED = 0;
   private static final int PACKED = 1;
   private static final int DISPATCHED = 2;
   private static final int DELIVERED = 3;
   private static final int CANCELLED = 4;
-
   private static final Gson gson = new Gson();
-  public static final int ERROR_CODE = -1;
-
-  private String endpoint;
-  private String CHI, postCode, name, surname, phoneNumber;
-  private boolean isRegistered = false;
+  private final String endpoint;
+  private final List<Order> orders = new ArrayList<>();
+  private String CHI;
+  private String postCode;
+  private String name;
+  private String surname;
+  private String phoneNumber;
   // Add multi threading possibly (concurrent programming)
 
   // Nested, might not work
-
-  //Surely should convert ids to ints not strings?
-  final class Item {
-    int id;
-    String name;
-    String quantity;
-
-    @Override
-    public String toString() {
-      return "Item{" +
-              "id=" + id +
-              ", name='" + name + '\'' +
-              ", quantity='" + quantity + '\'' +
-              '}';
-    }
-  }
-
-  final class MessagingFoodBox {
-    List<Item> contents;
-
-    String delivered_by;
-    String diet;
-    int id;
-    String name;
-
-    @Override
-    public String toString() {
-      return "MessagingFoodBox{" +
-              "contents=" + contents +
-              ", delivered_by='" + delivered_by + '\'' +
-              ", diet='" + diet + '\'' +
-              ", id=" + id +
-              ", name='" + name + '\'' +
-              '}';
-    }
-  }
-
-  // What happens if they want to order again but fails because order is late, cancelled etc due to lateness?
-
-  // Listener for order surely
-  final class Order {
-    int id;
-    MessagingFoodBox foodBox;
-    int status;
-    String date;
-
-    @Override
-    public String toString() {
-      return "Order{" +
-              "id=" + id +
-              ", foodBox=" + foodBox +
-              ", status=" + status +
-              ", date='" + date + '\'' +
-              '}';
-    }
-  }
-
-  //private last order date
+  private boolean isRegistered = false;
+  // private last order date
   private MessagingFoodBox foodBox = new MessagingFoodBox();
-  private List<MessagingFoodBox> foodBoxes = new ArrayList<MessagingFoodBox>();
-  private List<Order> orders = new ArrayList<>();
+
+  // What happens if they want to order again but fails because order is late, cancelled etc due to
+  // lateness?
+  private List<MessagingFoodBox> foodBoxes = new ArrayList<>();
 
   public ShieldingIndividualClientImp(String endpoint) {
     this.endpoint = endpoint;
     String request = "/showFoodBox";
     try {
       String response = ClientIO.doGETRequest(endpoint + request);
-      Type listType = new TypeToken<List<MessagingFoodBox>>() {} .getType();
+      Type listType = new TypeToken<List<MessagingFoodBox>>() {}.getType();
       this.foodBoxes = gson.fromJson(response, listType);
       System.out.println(this.foodBoxes);
     } catch (Exception e) {
@@ -137,13 +85,14 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   // Can do a better job of showing food boxes - show more detail? format it?
   @Override
   public Collection<String> showFoodBoxes(String dietaryPreference) {
-    String request = String.format("/showFoodBox?orderOption=catering&dietaryPreference=%s", dietaryPreference);
+    String request =
+        String.format("/showFoodBox?orderOption=catering&dietaryPreference=%s", dietaryPreference);
     List<MessagingFoodBox> responseBoxes;
-    List<String> boxIds = new ArrayList<String>();
+    List<String> boxIds = new ArrayList<>();
 
     try {
       String response = ClientIO.doGETRequest(endpoint + request);
-      Type listType = new TypeToken<List<MessagingFoodBox>>() {} .getType();
+      Type listType = new TypeToken<List<MessagingFoodBox>>() {}.getType();
       responseBoxes = gson.fromJson(response, listType);
 
       for (MessagingFoodBox b : responseBoxes) {
@@ -156,17 +105,18 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
     return boxIds;
   }
 
-  // **UPDATE2** REMOVED PARAMETER
-
   // add date and time to order when placing it surely?
   @Override
   public boolean placeOrder() {
-    if (this.foodBox.delivered_by.isEmpty()) {
+    if (this.foodBox.deliveredBy.isEmpty()) {
       System.out.println("No food box found");
       return false;
     }
-    String[] caterer = this.foodBox.delivered_by.split(",");
-    String request = String.format("/placeOrder?individual_id=%s&catering_business_name=%s&catering_postcode=%s", this.CHI, caterer[1], caterer[2]);
+    String[] caterer = this.foodBox.deliveredBy.split(",");
+    String request =
+        String.format(
+            "/placeOrder?individual_id=%s&catering_business_name=%s&catering_postcode=%s",
+            this.CHI, caterer[1], caterer[2]);
     String data = gson.toJson(this.foodBox);
     Order order = new Order();
 
@@ -179,7 +129,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
       order.id = Integer.parseInt(response);
       order.foodBox = this.foodBox;
       order.status = PLACED;
-            // REMEMBER TO ADD DATE FUNCTIONALITY HERE!!!!
+      // REMEMBER TO ADD DATE FUNCTIONALITY HERE!!!!
       this.orders.add(order);
     } catch (IOException e) {
       e.printStackTrace();
@@ -219,10 +169,12 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
     return isSuccessful;
   }
 
+  // **UPDATE2** REMOVED PARAMETER
+
   @Override
   // Method needs to be adapted for new server
 
-  //Add functionality for updating affected order if status has changed (maybe new method?)
+  // Add functionality for updating affected order if status has changed (maybe new method?)
   public int requestOrderStatus(int orderNumber) {
     String request = String.format("/requestStatus?order_id=%d", orderNumber);
     int status = -1;
@@ -245,7 +197,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
     try {
       String response = ClientIO.doGETRequest(endpoint + request);
-      Type listType = new TypeToken<List<String>>() {} .getType();
+      Type listType = new TypeToken<List<String>>() {}.getType();
       caterers = gson.fromJson(response, listType);
     } catch (Exception e) {
       e.printStackTrace();
@@ -280,18 +232,13 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
     return distance;
   }
 
-// TODO: WRITE FILE OR LIST TO KEEP REGISTERED IDs
   @Override
   public boolean isRegistered() {
     String request = "/registerShieldingIndividual?CHI=" + this.CHI;
     try {
       // perform request
       String response = ClientIO.doGETRequest(endpoint + request);
-      if(response.equals("already registered")){
-        return true;
-      }else{
-        return false;
-      }
+      return response.equals("already registered");
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -333,16 +280,16 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   @Override
   public Collection<Integer> getItemIdsForFoodBox(int foodBoxId) {
     List<MessagingFoodBox> allFoodBoxes = this.foodBoxes;
-    List<Integer> item_ids = new ArrayList<Integer>();
+    List<Integer> itemIds = new ArrayList<>();
     for (MessagingFoodBox foodBox : allFoodBoxes) {
       if (foodBox.id == foodBoxId) {
         for (Item item : foodBox.contents) {
-          item_ids.add(item.id);
+          itemIds.add(item.id);
         }
-        return item_ids;
+        return itemIds;
       }
     }
-    return item_ids;
+    return itemIds;
   }
 
   @Override
@@ -384,7 +331,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
         System.out.println("Common");
         System.out.println(this.getClosestCateringCompany());
         // System.out.println(getClosestCateringCompany());
-        this.foodBox.delivered_by = this.getClosestCateringCompany();
+        this.foodBox.deliveredBy = this.getClosestCateringCompany();
         System.out.println("\nWhy");
         return true;
       }
@@ -408,11 +355,11 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   @Override
   public Collection<Integer> getOrderNumbers() {
-    List<Integer> order_ids = new ArrayList<>();
+    List<Integer> orderIds = new ArrayList<>();
     for (Order order : this.orders) {
-      order_ids.add(order.id);
+      orderIds.add(order.id);
     }
-    return order_ids;
+    return orderIds;
   }
 
   // add constants for status
@@ -429,21 +376,20 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
     return status;
   }
-  //IRDK HERE FOR NOW
 
-  //Surely if ID is in list of ids then permit *or else reject*
+  // Surely if ID is in list of ids then permit *or else reject*
   @Override
   public Collection<Integer> getItemIdsForOrder(int orderNumber) {
-    List<Integer> item_ids = new ArrayList<>();
+    List<Integer> itemIds = new ArrayList<>();
     for (Order order : this.orders) {
       if (order.id == orderNumber) {
         for (Item item : order.foodBox.contents) {
-          item_ids.add(item.id);
-          return item_ids;
+          itemIds.add(item.id);
+          return itemIds;
         }
       }
     }
-    return item_ids;
+    return itemIds;
   }
 
   // Should enforce that all ids are strings
@@ -474,6 +420,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
     }
     return ERROR_CODE;
   }
+  // IRDK HERE FOR NOW
 
   // Do we want to revert the active food box to the food box it was before this command
   @Override
@@ -493,21 +440,93 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   @Override
   public String getClosestCateringCompany() {
-    String closest_caterer = "No caterer found";
-    float closest_distance = Float.POSITIVE_INFINITY;
+    String closestCaterer = "No caterer found";
+    float closestDistance = Float.POSITIVE_INFINITY;
 
     for (String caterer : getCateringCompanies()) {
-      String[] caterer_details = caterer.split(",");
-      if (caterer_details.length == 3) {
-        float distance = getDistance(this.postCode, caterer_details[2]);
-        if (distance < closest_distance) {
+      String[] catererDetails = caterer.split(",");
+      if (catererDetails.length == 3) {
+        float distance = getDistance(this.postCode, catererDetails[2]);
+        if (distance < closestDistance) {
           System.out.println("New closest");
-          closest_distance = distance;
-          closest_caterer = caterer;
+          closestDistance = distance;
+          closestCaterer = caterer;
         }
       }
     }
-    System.out.println("CLOSEST " + closest_caterer);
-    return closest_caterer;
+    System.out.println("CLOSEST " + closestCaterer);
+    return closestCaterer;
+  }
+
+  // Surely should convert ids to ints not strings?
+  final class Item {
+    int id;
+    String name;
+    String quantity;
+
+    @Override
+    public String toString() {
+      return "Item{"
+          + "id="
+          + id
+          + ", name='"
+          + name
+          + '\''
+          + ", quantity='"
+          + quantity
+          + '\''
+          + '}';
+    }
+  }
+
+  final class MessagingFoodBox {
+    List<Item> contents;
+
+    String deliveredBy;
+    String diet;
+    int id;
+    String name;
+
+    @Override
+    public String toString() {
+      return "MessagingFoodBox{"
+          + "contents="
+          + contents
+          + ", delivered_by='"
+          + deliveredBy
+          + '\''
+          + ", diet='"
+          + diet
+          + '\''
+          + ", id="
+          + id
+          + ", name='"
+          + name
+          + '\''
+          + '}';
+    }
+  }
+
+  // Listener for order surely
+  final class Order {
+    int id;
+    MessagingFoodBox foodBox;
+    int status;
+    String date;
+
+    @Override
+    public String toString() {
+      return "Order{"
+          + "id="
+          + id
+          + ", foodBox="
+          + foodBox
+          + ", status="
+          + status
+          + ", date='"
+          + date
+          + '\''
+          + '}';
+    }
   }
 }

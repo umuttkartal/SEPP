@@ -1,25 +1,17 @@
-/**
- *
- */
-
+/** */
 package shield;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import org.junit.jupiter.api.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.Collection;
-import java.util.Properties;
-import java.time.LocalDateTime;
 import java.io.InputStream;
+import java.util.Properties;
 
-/**
- *
- */
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/** */
 public class DummyShieldingIndividualClientImpTest {
-  private final static String clientPropsFilename = "client.cfg";
+  private static final String clientPropsFilename = "client.cfg";
 
   private Properties clientProps;
   private ShieldingIndividualClient client;

@@ -1,6 +1,4 @@
-/**
- *
- */
+/** */
 
 package shield;
 
@@ -8,7 +6,7 @@ import java.io.IOException;
 
 public class SupermarketClientImp implements SupermarketClient {
 
-  private String endpoint;
+  private final String endpoint;
   private String name;
   private String postCode;
   private String status;
@@ -20,12 +18,13 @@ public class SupermarketClientImp implements SupermarketClient {
 
   @Override
   public boolean registerSupermarket(String name, String postCode) {
-    String request = String.format("/registerSupermarket?business_name=%s&postcode=%s", name, postCode);
+    String request =
+        String.format(name, "/registerSupermarket?business_name=%s&postcode=%s", postCode);
     boolean isSuccessful = false;
 
     try {
       String response = ClientIO.doGETRequest(endpoint + request);
-      if (response.equals("registered new")){
+      if (response.equals("registered new")) {
         System.out.println(response);
         isSuccessful = true;
         this.name = name;
@@ -42,7 +41,11 @@ public class SupermarketClientImp implements SupermarketClient {
   // **UPDATE2** ADDED METHOD
   @Override
   public boolean recordSupermarketOrder(String CHI, int orderNumber) {
-    String request = String.format("/recordSupermarketOrder?individual_id=%s&order_number=%d&supermarket_business_name=%s&supermarket_postcode=%s", CHI, orderNumber, this.name, this.postCode);
+    String request =
+        String.format(
+            "/recordSupermarketOrder?individual_id=%s&order_number=%d&"
+                + "supermarket_business_name=%s&supermarket_postcode=%s",
+            CHI, orderNumber, this.name, this.postCode);
     boolean isSuccessful = false;
 
     try {
@@ -58,13 +61,15 @@ public class SupermarketClientImp implements SupermarketClient {
   // **UPDATE**
   @Override
   public boolean updateOrderStatus(int orderNumber, String status) {
-    String request = String.format("/updateSupermarketOrderStatus?order_id=%d&newStatus=%s", orderNumber, status);
+    String request =
+        String.format(
+            "/updateSupermarketOrderStatus?order_id=%d&newStatus=%s", orderNumber, status);
     boolean isSuccessful = false;
 
     try {
       String response = ClientIO.doGETRequest(endpoint + request);
       isSuccessful = Boolean.parseBoolean(response);
-      if(isSuccessful) {
+      if (isSuccessful) {
         this.status = status;
       }
     } catch (IOException e) {

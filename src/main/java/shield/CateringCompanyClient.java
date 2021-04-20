@@ -1,11 +1,11 @@
-/**
- *
- */
+/** Interface for catering company clients. */
 
 package shield;
 
 public interface CateringCompanyClient extends CateringCompanyClientEndpoints {
-  public boolean isRegistered();
-  public String getName();
-  public String getPostCode();
+  boolean isRegistered();
+
+  String getName();
+
+  String getPostCode();
 }

@@ -1,26 +1,18 @@
-/**
- *
- */
-
+/** */
 package shield;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
-import java.util.Properties;
-import java.time.LocalDateTime;
 import java.io.InputStream;
-
+import java.util.Properties;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- *
- */
-
+/** */
 public class CateringCompanyClientImpTest {
-  private final static String clientPropsFilename = "client.cfg";
+  private static final String clientPropsFilename = "client.cfg";
 
   private Properties clientProps;
   private CateringCompanyClient client;
@@ -47,7 +39,6 @@ public class CateringCompanyClientImpTest {
     client = new CateringCompanyClientImp(clientProps.getProperty("endpoint"));
     shieldedInd = new ShieldingIndividualClientImp(clientProps.getProperty("endpoint"));
   }
-
 
   @Test
   public void testCateringCompanyNewRegistration() {

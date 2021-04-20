@@ -1,26 +1,18 @@
-/**
- *
- */
-
+/** */
 package shield;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
-import java.util.Properties;
-import java.time.LocalDateTime;
 import java.io.InputStream;
-
+import java.util.Properties;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- *
- */
-
+/** */
 public class SupermarketClientImpTest {
-  private final static String clientPropsFilename = "client.cfg";
+  private static final String clientPropsFilename = "client.cfg";
 
   private Properties clientProps;
   private SupermarketClient client;
@@ -48,7 +40,6 @@ public class SupermarketClientImpTest {
     shieldedInd = new ShieldingIndividualClientImp(clientProps.getProperty("endpoint"));
   }
 
-
   @Test
   public void testSupermarketNewRegistration() {
     Random rand = new Random();
@@ -62,7 +53,7 @@ public class SupermarketClientImpTest {
   }
 
   @Test
-  public void testIsRegistered(){
+  public void testIsRegistered() {
     Random rand = new Random();
     String name = String.valueOf(rand.nextInt(10000));
     String postCode = "EH9_1LT";
