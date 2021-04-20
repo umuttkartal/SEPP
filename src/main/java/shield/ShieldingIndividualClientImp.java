@@ -13,7 +13,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   // Get that weird class that stores constants to do this
 
-  // Should we store unique unedited foodboxes locally?
+  // Should we store unique unedited food boxes locally?
   // Also allows reuse of functions for getting ids and the like from the box - alternatively can just store them locally
   //and use alternative find order function
 
@@ -115,17 +115,18 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
     try {
       String response = ClientIO.doGETRequest(endpoint + request);
       System.out.println(response);
-      isSuccessful = true;
-      this.CHI = CHI;
-      this.isRegistered = true;
+      if (!response.equals("already registered")) {
+        isSuccessful = true;
+        this.CHI = CHI;
+        this.isRegistered = true;
 
-      Type listType = new TypeToken<List<String>>() {} .getType();
-      List<String> details = gson.fromJson(response, listType);
-      this.postCode = details.get(0);
-      this.name = details.get(1);
-      this.surname = details.get(2);
-      this.phoneNumber = details.get(3);
-
+        Type listType = new TypeToken<List<String>>() {}.getType();
+        List<String> details = gson.fromJson(response, listType);
+        this.postCode = details.get(0);
+        this.name = details.get(1);
+        this.surname = details.get(2);
+        this.phoneNumber = details.get(3);
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -137,7 +138,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   @Override
   public Collection<String> showFoodBoxes(String dietaryPreference) {
     String request = String.format("/showFoodBox?orderOption=catering&dietaryPreference=%s", dietaryPreference);
-    List<MessagingFoodBox> responseBoxes = new ArrayList<MessagingFoodBox>();
+    List<MessagingFoodBox> responseBoxes;
     List<String> boxIds = new ArrayList<String>();
 
     try {
@@ -160,8 +161,12 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   // add date and time to order when placing it surely?
   @Override
   public boolean placeOrder() {
+    if (this.foodBox.delivered_by.isEmpty()) {
+      System.out.println("No food box found");
+      return false;
+    }
     String[] caterer = this.foodBox.delivered_by.split(",");
-    String request = String.format("/placeOrder?individual_id=%s&catering_business_name=%s&catering_postcode=%s", this.CHI, caterer[0], caterer[1]);
+    String request = String.format("/placeOrder?individual_id=%s&catering_business_name=%s&catering_postcode=%s", this.CHI, caterer[1], caterer[2]);
     String data = gson.toJson(this.foodBox);
     Order order = new Order();
 
@@ -252,14 +257,24 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   // **UPDATE** //OVERLOAD HERE POSSIBLY TO HANDLE NAMES AS WELL AS POSTCODES?
   @Override
   public float getDistance(String postCode1, String postCode2) {
-    String request = String.format("/distance?postcode1=%s,postcode2=%s", postCode1, postCode2);
+    postCode1 = postCode1.replace(' ', '_').toUpperCase();
+    postCode2 = postCode2.replace(' ', '_').toUpperCase();
+    String request = String.format("/distance?postcode1=%s&postcode2=%s", postCode1, postCode2);
     float distance = Float.POSITIVE_INFINITY;
 
     try {
       String response = ClientIO.doGETRequest(endpoint + request);
+      System.out.println("RESPONSE " + response);
       distance = Float.parseFloat(response);
     } catch (IOException e) {
+      System.out.println("Killer");
       e.printStackTrace();
+    } catch (RuntimeException e) {
+      if (!e.getMessage().contains("400")) {
+        System.out.println(postCode2 + " " + e.getMessage());
+      } else {
+        System.out.println("ERROR-BREAKER: 400 " + postCode2);
+      }
     }
 
     return distance;
@@ -346,6 +361,9 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   @Override
   public int getItemQuantityForFoodBox(int itemId, int foodBoxId) {
+    assert itemId >= 0 : "Item ID must be non-negative";
+    assert foodBoxId >= 0 : "Food box ID must be non-negative";
+
     for (MessagingFoodBox foodBox : this.foodBoxes) {
       if (foodBox.id == foodBoxId) {
         for (Item item : foodBox.contents) {
@@ -363,9 +381,11 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
     for (MessagingFoodBox foodBox : this.foodBoxes) {
       if (foodBox.id == foodBoxId) {
         this.foodBox = foodBox;
-        System.out.println(this.foodBox.delivered_by);
-        this.foodBox.delivered_by = getClosestCateringCompany();
-        System.out.println(this.foodBox.delivered_by);
+        System.out.println("Common");
+        System.out.println(this.getClosestCateringCompany());
+        // System.out.println(getClosestCateringCompany());
+        this.foodBox.delivered_by = this.getClosestCateringCompany();
+        System.out.println("\nWhy");
         return true;
       }
     }
@@ -376,7 +396,7 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   public boolean changeItemQuantityForPickedFoodBox(int itemId, int quantity) {
     for (Item item : this.foodBox.contents) {
       if (item.id == itemId) {
-        if (quantity > Integer.parseInt(item.quantity)) {
+        if (quantity < Integer.parseInt(item.quantity)) {
           item.quantity = Integer.toString(quantity);
           return true;
         }
@@ -474,30 +494,20 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   @Override
   public String getClosestCateringCompany() {
     String closest_caterer = "No caterer found";
-    float closest_distance = 0;
+    float closest_distance = Float.POSITIVE_INFINITY;
+
     for (String caterer : getCateringCompanies()) {
       String[] caterer_details = caterer.split(",");
-      float distance = getDistance(this.postCode, caterer_details[1]);
-      if (distance < closest_distance){
-        closest_distance = distance;
-        closest_caterer = caterer;
+      if (caterer_details.length == 3) {
+        float distance = getDistance(this.postCode, caterer_details[2]);
+        if (distance < closest_distance) {
+          System.out.println("New closest");
+          closest_distance = distance;
+          closest_caterer = caterer;
+        }
       }
     }
-
+    System.out.println("CLOSEST " + closest_caterer);
     return closest_caterer;
   }
-
-  private List<MessagingFoodBox> getAllFoodBoxes(){
-    String request = "/showFoodBox?orderOption=catering";
-    List<MessagingFoodBox> responseBoxes = new ArrayList<MessagingFoodBox>();
-    try {
-      String response = ClientIO.doGETRequest(endpoint + request);
-      Type listType = new TypeToken<List<MessagingFoodBox>>() {} .getType();
-      responseBoxes = new Gson().fromJson(response, listType);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return responseBoxes;
-  }
-
 }

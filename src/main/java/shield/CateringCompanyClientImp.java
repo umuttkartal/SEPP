@@ -24,13 +24,13 @@ public class CateringCompanyClientImp implements CateringCompanyClient {
 
       try {
           String response = ClientIO.doGETRequest(endpoint + request);
-          System.out.println(response);
-
-          isSuccessful = true;
-          this.name = name;
-          this.postCode = postCode;
-          this.isRegistered = true;
-
+          if (response.equals("registered new")){
+              System.out.println(response);
+              isSuccessful = true;
+              this.name = name;
+              this.postCode = postCode;
+              this.isRegistered = true;
+          }
       } catch (IOException e) {
           e.printStackTrace();
       }
@@ -45,6 +45,8 @@ public class CateringCompanyClientImp implements CateringCompanyClient {
 
       try {
           String response = ClientIO.doGETRequest(endpoint + request);
+          System.out.println(response);
+          System.out.println(orderNumber);
           isSuccessful = Boolean.parseBoolean(response);
       } catch (IOException e) {
           e.printStackTrace();

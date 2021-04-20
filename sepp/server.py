@@ -216,8 +216,8 @@ def update_order_status(order_id, new_status, dst):
 
                         if new_status == DeliveryStatus.CANCELLED:
                             if current_status != DeliveryStatus.DISPATCHED and \
-                                current_status != DeliveryStatus.DELIVERED and \
-                                current_status != DeliveryStatus.CANCELLED:
+                                    current_status != DeliveryStatus.DELIVERED and \
+                                    current_status != DeliveryStatus.CANCELLED:
                                 an_order[-1] = str(new_status)+'\n'
                                 changed = True
                         else:

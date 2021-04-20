@@ -75,8 +75,8 @@ public class CateringCompanyClientImpTest {
   @Test
   public void testCateringCompanyOrderFlow() {
     Random rand = new Random();
-    String CHI = "1105871234";
-    int orderNumber = 0;
+    String CHI = rand.nextInt(310000000) + "0";
+    // int orderNumber = 0; // Can't just pick any random number
     String statusPacked = "packed";
     String statusDispatched = "dispatched";
     String statusDelivered = "delivered";
@@ -87,6 +87,7 @@ public class CateringCompanyClientImpTest {
     shieldedInd.pickFoodBox(2);
     shieldedInd.placeOrder();
 
+    int orderNumber = shieldedInd.getOrderNumbers().iterator().next();
     assertTrue(client.updateOrderStatus(orderNumber, statusPacked));
     assertTrue(client.updateOrderStatus(orderNumber, statusDispatched));
     assertTrue(client.updateOrderStatus(orderNumber, statusDelivered));
@@ -95,8 +96,9 @@ public class CateringCompanyClientImpTest {
   @Test
   public void testSupermarketOrderWrongStatusOrder() {
     Random rand = new Random();
-    String CHI = "1105871234";
-    int orderNumber = rand.nextInt(10000);
+    String CHI = rand.nextInt(310000000) + "0";
+    // String CHI = "1105871232";
+    // int orderNumber = rand.randInt(10000); // Can't just pick any random number
     String statusPacked = "packed";
     String statusFake = "fake";
     String name = String.valueOf(rand.nextInt(10000));
@@ -105,7 +107,7 @@ public class CateringCompanyClientImpTest {
     client.registerCateringCompany(name, postCode);
     shieldedInd.pickFoodBox(2);
     shieldedInd.placeOrder();
-
+    int orderNumber = shieldedInd.getOrderNumbers().iterator().next();
     assertTrue(client.updateOrderStatus(orderNumber, statusPacked));
     assertFalse(client.updateOrderStatus(orderNumber, statusFake));
   }

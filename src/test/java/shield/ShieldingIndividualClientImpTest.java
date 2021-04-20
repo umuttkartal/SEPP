@@ -46,11 +46,11 @@ public class ShieldingIndividualClientImpTest {
   @Test
   public void testShieldingIndividualNewRegistration() {
     Random rand = new Random();
-    String chi = String.valueOf(rand.nextInt(10000));
+    String CHI = rand.nextInt(310000000) + "0";
 
-    assertTrue(client.registerShieldingIndividual(chi));
+    assertTrue(client.registerShieldingIndividual(CHI));
     assertTrue(client.isRegistered());
-    assertEquals(client.getCHI(), chi);
+    assertEquals(client.getCHI(), CHI);
   }
 
 
@@ -103,15 +103,16 @@ public class ShieldingIndividualClientImpTest {
   @Test
   public void testPlaceOrder(){
     Random rand = new Random();
-    String chi = String.valueOf(rand.nextInt(10000));
-    assertTrue(client.registerShieldingIndividual(chi));
+    String CHI = rand.nextInt(310000000) + "0";
+    assertTrue(client.registerShieldingIndividual(CHI));
     assertTrue(client.isRegistered());
-    assertEquals(chi, client.getCHI());
+    assertEquals(CHI, client.getCHI());
     client.pickFoodBox(1);
     assertTrue(client.placeOrder());
     client.changeItemQuantityForPickedFoodBox(2,1);
-    assertTrue(client.editOrder(2));
-    assertTrue(client.cancelOrder(2));
+    int orderNumber = client.getOrderNumbers().iterator().next();
+    assertTrue(client.editOrder(orderNumber));
+    assertTrue(client.cancelOrder(orderNumber));
   }
 
 }

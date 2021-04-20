@@ -25,13 +25,13 @@ public class SupermarketClientImp implements SupermarketClient {
 
     try {
       String response = ClientIO.doGETRequest(endpoint + request);
-      System.out.println(response);
-
-      isSuccessful = true;
-      this.name = name;
-      this.postCode = postCode;
-      this.isRegistered = true;
-
+      if (response.equals("registered new")){
+        System.out.println(response);
+        isSuccessful = true;
+        this.name = name;
+        this.postCode = postCode;
+        this.isRegistered = true;
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }
