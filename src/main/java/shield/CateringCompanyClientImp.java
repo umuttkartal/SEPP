@@ -5,7 +5,6 @@ package shield;
 import java.io.IOException;
 
 public class CateringCompanyClientImp implements CateringCompanyClient {
-
   private final String endpoint;
   private String name;
   private String postCode;
@@ -18,7 +17,7 @@ public class CateringCompanyClientImp implements CateringCompanyClient {
   @Override
   public boolean registerCateringCompany(String name, String postCode) {
     String request =
-        String.format(name, "/registerCateringCompany?business_name=%s&postcode=%s", postCode);
+        String.format("/registerCateringCompany?business_name=%s&postcode=%s", name, postCode);
     boolean isSuccessful = false;
 
     try {
