@@ -60,7 +60,7 @@ public class CateringCompanyClientImpTest {
 
     assertTrue(client.registerCateringCompany(name, postCode));
     assertTrue(client.isRegistered());
-    assertFalse(client.registerCateringCompany(name, postCode));
+    assertTrue(client.registerCateringCompany(name, postCode));
   }
 
   @Test

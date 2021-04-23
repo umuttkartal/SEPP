@@ -22,7 +22,7 @@ public class CateringCompanyClientImp implements CateringCompanyClient {
 
     try {
       String response = ClientIO.doGETRequest(endpoint + request);
-      if (response.equals("registered new")) {
+      if (response.equals("registered new") || response.equals("already registered")) {
         System.out.println(response);
         isSuccessful = true;
         this.name = name;

@@ -59,7 +59,7 @@ public class SupermarketClientImpTest {
     String postCode = "EH9_1LT";
     assertTrue(client.registerSupermarket(name, postCode));
     assertTrue(client.isRegistered());
-    assertFalse(client.registerSupermarket(name, postCode));
+    assertTrue(client.registerSupermarket(name, postCode));
   }
 
   @Test

@@ -2,10 +2,6 @@ package shield;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import shield.utils.Item;
-import shield.utils.MessagingFoodBox;
-import shield.utils.Order;
-
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
@@ -15,6 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import shield.utils.Item;
+import shield.utils.MessagingFoodBox;
+import shield.utils.Order;
 
 public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
@@ -65,12 +64,12 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
         assert details.size() == 4;
 
         this.CHI = CHI;
-        this.isRegistered = true;
         this.postCode = details.get(0);
         this.name = details.get(1);
         this.surname = details.get(2);
         this.phoneNumber = details.get(3);
       }
+      this.isRegistered = true;
     } catch (IOException e) {
       e.printStackTrace();
     }
