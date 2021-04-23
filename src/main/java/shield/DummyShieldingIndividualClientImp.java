@@ -10,10 +10,15 @@ package shield;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import shield.utils.MessagingFoodBox;
+import shield.utils.Order;
+
 import java.lang.reflect.Type;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class DummyShieldingIndividualClientImp implements ShieldingIndividualClient {
   /** The string representation of the base server endpoint (a HTTP address). */
@@ -172,6 +177,46 @@ public class DummyShieldingIndividualClientImp implements ShieldingIndividualCli
   // **UPDATE**
   @Override
   public String getClosestCateringCompany() {
+    return null;
+  }
+
+  @Override
+  public String getEndpoint() {
+    return null;
+  }
+
+  @Override
+  public Map<Integer, Order> getOrders() {
+    return null;
+  }
+
+  @Override
+  public String getPostCode() {
+    return null;
+  }
+
+  @Override
+  public String getName() {
+    return null;
+  }
+
+  @Override
+  public String getSurname() {
+    return null;
+  }
+
+  @Override
+  public String getPhoneNumber() {
+    return null;
+  }
+
+  @Override
+  public LocalDateTime getLatestOrderTime() {
+    return null;
+  }
+
+  @Override
+  public shield.utils.MessagingFoodBox getLiveFoodBox() {
     return null;
   }
 

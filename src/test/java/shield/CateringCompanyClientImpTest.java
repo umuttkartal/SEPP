@@ -41,6 +41,18 @@ public class CateringCompanyClientImpTest {
   }
 
   @Test
+  public void testGetPostCode() {
+    clientProps = loadProperties(clientPropsFilename);
+    assertEquals(clientProps.getProperty("postcode"), client.getPostCode());
+  }
+
+  @Test
+  public void testGetName() {
+    clientProps = loadProperties(clientPropsFilename);
+    assertEquals(clientProps.getProperty("name"), client.getName());
+  }
+
+  @Test
   public void testCateringCompanyNewRegistration() {
     Random rand = new Random();
     String name = String.valueOf(rand.nextInt(10000));
