@@ -9,6 +9,13 @@ package shield;
 import java.util.Collection;
 
 public interface ShieldingIndividualClient extends ShieldingIndividualClientEndpoints {
+  int ERROR_CODE = -1;
+  int PLACED = 0;
+  int PACKED = 1;
+  int DISPATCHED = 2;
+  int DELIVERED = 3;
+  int CANCELLED = 4;
+
   /**
    * Returns if the individual using the client is registered with the server.
    *

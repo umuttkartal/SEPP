@@ -9,7 +9,6 @@ public class SupermarketClientImp implements SupermarketClient {
   private final String endpoint;
   private String name;
   private String postCode;
-  private String status;
   private boolean isRegistered = false;
 
   public SupermarketClientImp(String endpoint) {
@@ -19,9 +18,8 @@ public class SupermarketClientImp implements SupermarketClient {
   @Override
   public boolean registerSupermarket(String name, String postCode) {
     String request =
-        String.format(name, "/registerSupermarket?business_name=%s&postcode=%s", postCode);
+        String.format("/registerSupermarket?business_name=%s&postcode=%s", name, postCode);
     boolean isSuccessful = false;
-
     try {
       String response = ClientIO.doGETRequest(endpoint + request);
       if (response.equals("registered new")) {
@@ -69,14 +67,15 @@ public class SupermarketClientImp implements SupermarketClient {
     try {
       String response = ClientIO.doGETRequest(endpoint + request);
       isSuccessful = Boolean.parseBoolean(response);
-      if (isSuccessful) {
-        this.status = status;
-      }
     } catch (IOException e) {
       e.printStackTrace();
     }
 
     return isSuccessful;
+  }
+
+  public boolean cancelOrder(int orderNumber) {
+    return false;
   }
 
   @Override
