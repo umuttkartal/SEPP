@@ -97,7 +97,7 @@ public class CateringCompanyClientImpTest {
   }
 
   @Test
-  public void testSupermarketOrderWrongStatus() {
+  public void testCateringOrderWrongStatus() {
     Random rand = new Random();
     String CHI = generateCHI();
     String statusDel = "delivered";

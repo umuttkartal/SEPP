@@ -56,6 +56,9 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   @Override
   public boolean registerShieldingIndividual(String CHI) {
+    if (!isValidCHI(CHI)) {
+      return false;
+    }
     String request = String.format("/registerShieldingIndividual?CHI=%s", CHI);
 
     try {
@@ -71,6 +74,8 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
         this.name = details.get(1);
         this.surname = details.get(2);
         this.phoneNumber = details.get(3);
+        this.postCode = this.postCode.replace(' ', '_').toUpperCase();
+        assert isValidPostCode(this.postCode);
       }
       this.isRegistered = true;
     } catch (IOException e) {

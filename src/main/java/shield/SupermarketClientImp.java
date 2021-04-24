@@ -41,6 +41,9 @@ public class SupermarketClientImp implements SupermarketClient {
   // **UPDATE2** ADDED METHOD
   @Override
   public boolean recordSupermarketOrder(String CHI, int orderNumber) {
+    if (!isRegistered() || !Validators.isValidCHI(CHI)) {
+      return false;
+    }
     String request =
         String.format(
             "/recordSupermarketOrder?individual_id=%s&order_number=%d&"
