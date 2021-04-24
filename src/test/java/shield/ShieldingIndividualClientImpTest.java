@@ -20,6 +20,8 @@ public class ShieldingIndividualClientImpTest {
 
   private Properties clientProps;
   private ShieldingIndividualClient client;
+  private SupermarketClient supermarket;
+  private CateringCompanyClient catering;
 
   private Properties loadProperties(String propsFilename) {
     ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -40,63 +42,9 @@ public class ShieldingIndividualClientImpTest {
     clientProps = loadProperties(clientPropsFilename);
 
     client = new ShieldingIndividualClientImp(clientProps.getProperty("endpoint"));
+    supermarket = new SupermarketClientImp(clientProps.getProperty("endpoint"));
+    catering = new CateringCompanyClientImp(clientProps.getProperty("endpoint"));
   }
-
-  @Test
-  public void testGetEndpoint() {
-    clientProps = loadProperties(clientPropsFilename);
-    assertEquals(clientProps.getProperty("endpoint"), client.getEndpoint());
-  }
-
-  /*
-  @Test
-  public void testGetOrders() {
-    clientProps = loadProperties(clientPropsFilename);
-    assertEquals(clientProps.getProperty("orders"), client.getOrders());
-  }
-   */
-
-  @Test
-  public void testGetPostCode() {
-    clientProps = loadProperties(clientPropsFilename);
-    assertEquals(clientProps.getProperty("postcode"), client.getPostCode());
-  }
-
-  @Test
-  public void testGetName() {
-    clientProps = loadProperties(clientPropsFilename);
-    assertEquals(clientProps.getProperty("name"), client.getName());
-  }
-
-  @Test
-  public void testGetSurname() {
-    clientProps = loadProperties(clientPropsFilename);
-    assertEquals(clientProps.getProperty("surname"), client.getSurname());
-  }
-
-  @Test
-  public void testGetPhoneNumber() {
-    clientProps = loadProperties(clientPropsFilename);
-    assertEquals(clientProps.getProperty("phoneNumber"), client.getPhoneNumber());
-  }
-
-  /*
-  @Test
-  public void testGetLatestOrderTime() {
-    clientProps = loadProperties(clientPropsFilename);
-    assertEquals(clientProps.getProperty("latestOrderTime"), client.getLatestOrderTime());
-  }
-
-   */
-
-  /*
-  @Test
-  public void testGetLiveFoodBox() {
-    clientProps = loadProperties(clientPropsFilename);
-    assertEquals(clientProps.getProperty("liveFoodBox"), client.getLiveFoodBox());
-  }
-
-   */
 
   @Test
   public void testShieldingIndividualNewRegistration() {
@@ -176,5 +124,30 @@ public class ShieldingIndividualClientImpTest {
     int orderNumber = client.getOrderNumbers().iterator().next();
     assertTrue(client.editOrder(orderNumber));
     assertTrue(client.cancelOrder(orderNumber));
+  }
+
+
+  @Test
+  public void testRequestOrderStatus() {
+    Random rand = new Random();
+    String CHI = rand.nextInt(310000000) + "0";
+    String statusPacked = "packed";
+    String statusDispatched = "dispatched";
+    String statusDelivered = "delivered";
+    String name = String.valueOf(rand.nextInt(10000));
+    String postCode = "EH9_1LT";
+    client.registerShieldingIndividual(CHI);
+    catering.registerCateringCompany(name, postCode);
+    client.pickFoodBox(2);
+    client.placeOrder();
+
+    int orderNumber = client.getOrderNumbers().iterator().next();
+
+    assertTrue(catering.updateOrderStatus(orderNumber, statusPacked));
+    assertEquals(client.requestOrderStatus(orderNumber), 1);
+    assertTrue(catering.updateOrderStatus(orderNumber, statusDispatched));
+    assertEquals(client.requestOrderStatus(orderNumber), 2);
+    assertTrue(catering.updateOrderStatus(orderNumber, statusDelivered));
+    assertEquals(client.requestOrderStatus(orderNumber), 3);
   }
 }
