@@ -42,6 +42,18 @@ public class SupermarketClientImpTest {
   }
 
   @Test
+  public void testGetPostCode() {
+    clientProps = loadProperties(clientPropsFilename);
+    assertEquals(clientProps.getProperty("postcode"), client.getPostCode());
+  }
+
+  @Test
+  public void testGetName() {
+    clientProps = loadProperties(clientPropsFilename);
+    assertEquals(clientProps.getProperty("name"), client.getName());
+  }
+
+  @Test
   public void testSupermarketNewRegistration() {
     Random rand = new Random();
     String name = String.valueOf(rand.nextInt(10000));
@@ -67,13 +79,13 @@ public class SupermarketClientImpTest {
   public void testSupermarketOrderFlow() {
     Random rand = new Random();
     String CHI = generateCHI();
+    shieldedInd.registerShieldingIndividual(CHI);
+    String name = String.valueOf(rand.nextInt(10000));
+    String postCode = String.valueOf(rand.nextInt(10000));
     int orderNumber = rand.nextInt(10000);
     String statusPacked = "packed";
     String statusDispatched = "dispatched";
     String statusDelivered = "delivered";
-    String name = String.valueOf(rand.nextInt(10000));
-    String postCode = String.valueOf(rand.nextInt(10000));
-    shieldedInd.registerShieldingIndividual(CHI);
 
     assertTrue(client.registerSupermarket(name, postCode));
     assertTrue(client.recordSupermarketOrder(CHI, orderNumber));
@@ -86,12 +98,12 @@ public class SupermarketClientImpTest {
   public void testSupermarketOrderWrongStatus() {
     Random rand = new Random();
     String CHI = generateCHI();
+    shieldedInd.registerShieldingIndividual(CHI);
+    String name = String.valueOf(rand.nextInt(10000));
     int orderNumber = rand.nextInt(10000);
     String statusDel = "delivered";
     String statusWrong = "wRoNg";
-    String name = String.valueOf(rand.nextInt(10000));
     String postCode = "EH9_1LT";
-    shieldedInd.registerShieldingIndividual(CHI);
 
     assertTrue(client.registerSupermarket(name, postCode));
     assertTrue(client.recordSupermarketOrder(CHI, orderNumber));

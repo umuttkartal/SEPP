@@ -6,7 +6,12 @@
 
 package shield;
 
+import shield.utils.MessagingFoodBox;
+import shield.utils.Order;
+
+import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Map;
 
 public interface ShieldingIndividualClient extends ShieldingIndividualClientEndpoints {
   int ERROR_CODE = -1;
@@ -201,4 +206,20 @@ public interface ShieldingIndividualClient extends ShieldingIndividualClientEndp
    * @return business name of catering company
    */
   String getClosestCateringCompany();
+
+  String getEndpoint();
+
+  Map<Integer, Order> getOrders();
+
+  String getPostCode();
+
+  String getName();
+
+  String getSurname();
+
+  String getPhoneNumber();
+
+  LocalDateTime getLatestOrderTime();
+
+  MessagingFoodBox getLiveFoodBox();
 }
