@@ -9,6 +9,7 @@ import java.util.Properties;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static shield.Generators.generateCHI;
 
 /** */
 public class CateringCompanyClientImpTest {
@@ -60,13 +61,13 @@ public class CateringCompanyClientImpTest {
 
     assertTrue(client.registerCateringCompany(name, postCode));
     assertTrue(client.isRegistered());
-    assertTrue(client.registerCateringCompany(name, postCode));
+    assertFalse(client.registerCateringCompany(name, postCode));
   }
 
   @Test
   public void testCateringCompanyOrderFlow() {
     Random rand = new Random();
-    String CHI = rand.nextInt(310000000) + "0";
+    String CHI = generateCHI();
     // int orderNumber = 0; // Can't just pick any random number
     String statusPacked = "packed";
     String statusDispatched = "dispatched";

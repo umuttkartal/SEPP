@@ -3,6 +3,7 @@
 package shield;
 
 import java.io.IOException;
+import shield.utils.Validators;
 
 public class SupermarketClientImp implements SupermarketClient {
 
@@ -39,6 +40,9 @@ public class SupermarketClientImp implements SupermarketClient {
   // **UPDATE2** ADDED METHOD
   @Override
   public boolean recordSupermarketOrder(String CHI, int orderNumber) {
+    if (!isRegistered() || !Validators.isValidCHI(CHI)) {
+      return false;
+    }
     String request =
         String.format(
             "/recordSupermarketOrder?individual_id=%s&order_number=%d&"
@@ -59,6 +63,9 @@ public class SupermarketClientImp implements SupermarketClient {
   // **UPDATE**
   @Override
   public boolean updateOrderStatus(int orderNumber, String status) {
+    if (!isRegistered()) {
+      return false;
+    }
     String request =
         String.format(
             "/updateSupermarketOrderStatus?order_id=%d&newStatus=%s", orderNumber, status);
@@ -72,10 +79,6 @@ public class SupermarketClientImp implements SupermarketClient {
     }
 
     return isSuccessful;
-  }
-
-  public boolean cancelOrder(int orderNumber) {
-    return false;
   }
 
   @Override

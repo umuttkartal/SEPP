@@ -6,6 +6,14 @@ public class Item {
   private String name;
   private int quantity;
 
+  public boolean changeQuantity(int quantity) {
+    if (quantity < this.quantity) {
+      setQuantity(quantity);
+      return true;
+    }
+    return false;
+  }
+
   public int getId() {
     return id;
   }

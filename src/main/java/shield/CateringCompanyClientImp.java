@@ -38,6 +38,9 @@ public class CateringCompanyClientImp implements CateringCompanyClient {
 
   @Override
   public boolean updateOrderStatus(int orderNumber, String status) {
+    if (!isRegistered()) {
+      return false;
+    }
     String request =
         String.format("/updateOrderStatus?order_id=%d&newStatus=%s", orderNumber, status);
     boolean isSuccessful = false;

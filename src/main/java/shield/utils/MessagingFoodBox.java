@@ -1,11 +1,12 @@
 package shield.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MessagingFoodBox {
-  List<Item> contents;
+  ArrayList<Item> contents;
 
   private String deliveredBy;
   private String diet;
@@ -20,7 +21,24 @@ public class MessagingFoodBox {
     return contents.stream().collect(Collectors.toMap(Item::getId, item -> item));
   }
 
-  public void setContents(List<Item> contents) {
+  public boolean setItemQuantity(int itemId, int quantity) {
+    boolean isReducible = isReducible();
+    if (isReducible) {
+      return getContentsAsMap().get(itemId).changeQuantity(quantity);
+    }
+    return false;
+  }
+
+  private boolean isReducible() {
+    int numOfItemsInBox = 0;
+    for (Item item : getContents()) {
+      numOfItemsInBox += item.getQuantity();
+    }
+    boolean isReducible = numOfItemsInBox > 1;
+    return isReducible;
+  }
+
+  public void setContents(ArrayList<Item> contents) {
     this.contents = contents;
   }
 

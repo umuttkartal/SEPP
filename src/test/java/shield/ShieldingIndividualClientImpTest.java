@@ -11,6 +11,7 @@ import java.util.Properties;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static shield.Generators.generateCHI;
 
 /** */
 public class ShieldingIndividualClientImpTest {
@@ -43,7 +44,7 @@ public class ShieldingIndividualClientImpTest {
   @Test
   public void testShieldingIndividualNewRegistration() {
     Random rand = new Random();
-    String CHI = rand.nextInt(310000000) + "0";
+    String CHI = generateCHI();
 
     assertTrue(client.registerShieldingIndividual(CHI));
     assertTrue(client.isRegistered());
@@ -107,7 +108,7 @@ public class ShieldingIndividualClientImpTest {
   @Test
   public void testPlaceOrder() {
     Random rand = new Random();
-    String CHI = rand.nextInt(310000000) + "0";
+    String CHI = generateCHI();
     assertTrue(client.registerShieldingIndividual(CHI));
     assertTrue(client.isRegistered());
     assertEquals(CHI, client.getCHI());

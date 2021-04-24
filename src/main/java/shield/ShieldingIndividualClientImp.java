@@ -15,6 +15,9 @@ import shield.utils.Item;
 import shield.utils.MessagingFoodBox;
 import shield.utils.Order;
 
+import static shield.utils.Validators.isValidCHI;
+import static shield.utils.Validators.isValidPostCode;
+
 public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   private static final Gson gson = new Gson();
@@ -53,6 +56,9 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   @Override
   public boolean registerShieldingIndividual(String CHI) {
+    if (!isValidCHI(CHI)) {
+      return false;
+    }
     String request = String.format("/registerShieldingIndividual?CHI=%s", CHI);
 
     try {
@@ -68,6 +74,8 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
         this.name = details.get(1);
         this.surname = details.get(2);
         this.phoneNumber = details.get(3);
+        this.postCode = this.postCode.replace(' ', '_').toUpperCase();
+        assert isValidPostCode(this.postCode);
       }
       this.isRegistered = true;
     } catch (IOException e) {
@@ -102,6 +110,9 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   // add date and time to order when placing it surely?
   @Override
   public boolean placeOrder() {
+    if (!isRegistered()) {
+      return false;
+    }
     if (this.liveFoodBox == null || this.liveFoodBox.getDeliveredBy().isEmpty()) {
       System.out.println("No food box found");
       return false;
@@ -132,11 +143,17 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   }
 
   public boolean isEligible() {
+    if (!isRegistered()) {
+      return false;
+    }
     return latestOrderTime.isBefore(LocalDateTime.now().minusWeeks(1));
   }
 
   @Override
   public boolean editOrder(int orderNumber) {
+    if (!isRegistered()) {
+      return false;
+    }
     String request = String.format("/editOrder?order_id=%d", orderNumber);
     String data = gson.toJson(this.liveFoodBox);
     boolean isSuccessful = false;
@@ -153,6 +170,9 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   @Override
   public boolean cancelOrder(int orderNumber) {
+    if (!isRegistered()) {
+      return false;
+    }
     String request = String.format("/cancelOrder?order_id=%d", orderNumber);
     boolean isSuccessful = false;
 
@@ -180,6 +200,9 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   // Method needs to be adapted for new server
 
   public int requestOrderStatus(int orderNumber) {
+    if (!isRegistered()) {
+      return ERROR_CODE;
+    }
     String request = String.format("/requestStatus?order_id=%d", orderNumber);
     int status = ERROR_CODE;
 
@@ -358,6 +381,9 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   @Override
   public boolean pickFoodBox(int foodBoxId) {
+    if (!isRegistered()) {
+      return false;
+    }
     this.liveFoodBox = this.foodBoxes.get(foodBoxId);
     this.liveFoodBox.setDeliveredBy(getClosestCateringCompany());
 
@@ -366,8 +392,11 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   @Override
   public boolean changeItemQuantityForPickedFoodBox(int itemId, int quantity) {
+    if (!isRegistered()) {
+      return false;
+    }
     if (quantity < this.liveFoodBox.getContentsAsMap().get(itemId).getQuantity()) {
-      this.liveFoodBox.getContentsAsMap().get(itemId).setQuantity(quantity);
+      this.liveFoodBox.setItemQuantity(itemId, quantity);
       return true;
     }
     return false;
@@ -381,8 +410,11 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   // add constants for status
   @Override
   public String getStatusForOrder(int orderNumber) {
+    if (!isRegistered()) {
+      return Integer.toString(ERROR_CODE);
+    }
     String request = String.format("/requestStatus?order_id=%s", orderNumber);
-    String status = "No status could be found for order number";
+    String status = Integer.toString(ERROR_CODE);
 
     try {
       status = ClientIO.doGETRequest(endpoint + request);
@@ -397,6 +429,9 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   @Override
   public Collection<Integer> getItemIdsForOrder(int orderNumber) {
     List<Integer> itemIds = new ArrayList<>();
+    if (!isRegistered()) {
+      return itemIds;
+    }
 
     for (Item item : orders.get(orderNumber).getFoodBox().getContents()) {
       itemIds.add(item.getId());
@@ -408,17 +443,26 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
   // Should enforce that all ids are strings
   @Override
   public String getItemNameForOrder(int itemId, int orderNumber) {
+    if (!isRegistered()) {
+      return Integer.toString(ERROR_CODE);
+    }
     return this.orders.get(orderNumber).getFoodBox().getContentsAsMap().get(itemId).getName();
   }
 
   @Override
   public int getItemQuantityForOrder(int itemId, int orderNumber) {
+    if (!isRegistered()) {
+      return ERROR_CODE;
+    }
     return this.orders.get(orderNumber).getFoodBox().getContentsAsMap().get(itemId).getQuantity();
   }
 
   // Do we want to revert the active food box to the food box it was before this command
   @Override
   public boolean setItemQuantityForOrder(int itemId, int orderNumber, int quantity) {
+    if (!isRegistered()) {
+      return false;
+    }
     boolean isSuccessful = false;
     this.liveFoodBox = this.orders.get(orderNumber).getFoodBox();
     if (changeItemQuantityForPickedFoodBox(itemId, quantity)) {
@@ -430,6 +474,9 @@ public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   @Override
   public String getClosestCateringCompany() {
+    if (!isRegistered()) {
+      return Integer.toString(ERROR_CODE);
+    }
     String closestCaterer = "No caterer found";
     float closestDistance = Float.POSITIVE_INFINITY;
 
