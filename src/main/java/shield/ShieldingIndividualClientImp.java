@@ -15,6 +15,9 @@ import shield.utils.Item;
 import shield.utils.MessagingFoodBox;
 import shield.utils.Order;
 
+import static shield.utils.Validators.isValidCHI;
+import static shield.utils.Validators.isValidPostCode;
+
 public class ShieldingIndividualClientImp implements ShieldingIndividualClient {
 
   private static final Gson gson = new Gson();

@@ -3,6 +3,7 @@
 package shield;
 
 import java.io.IOException;
+import shield.utils.Validators;
 
 public class SupermarketClientImp implements SupermarketClient {
 
