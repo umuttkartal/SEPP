@@ -26,4 +26,6 @@ public interface CateringCompanyClientEndpoints {
    * @return true if the operation occurred correctly
    */
   boolean updateOrderStatus(int orderNumber, String status);
+
+  boolean isValidPostcodeFormat(String postcode);
 }

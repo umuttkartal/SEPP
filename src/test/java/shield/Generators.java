@@ -10,7 +10,7 @@ public class Generators {
     int daysInPast = rand.nextInt(365 * 200);
     int extension = rand.nextInt(8999) + 1000;
     String date_of_birth =
-        LocalDate.now().minusDays(daysInPast).format(DateTimeFormatter.ofPattern("ddMMyy"));
+            LocalDate.now().minusDays(daysInPast).format(DateTimeFormatter.ofPattern("ddMMyy"));
     return date_of_birth + extension;
   }
 }

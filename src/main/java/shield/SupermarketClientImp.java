@@ -18,6 +18,7 @@ public class SupermarketClientImp implements SupermarketClient {
 
   @Override
   public boolean registerSupermarket(String name, String postCode) {
+    assert isValidPostcodeFormat(postCode) : "Postcode format is incorrect" + postCode;
     String request =
         String.format("/registerSupermarket?business_name=%s&postcode=%s", name, postCode);
     boolean isSuccessful = false;
@@ -94,5 +95,15 @@ public class SupermarketClientImp implements SupermarketClient {
   @Override
   public String getPostCode() {
     return this.postCode;
+  }
+
+  @Override
+  public boolean isValidPostcodeFormat(String postcode){
+    assert postcode.length() > 6;
+    boolean startsWithEH = "EH".equals(postcode.substring(0,2));
+    boolean hasUnderScore = postcode.charAt(3) == '_' || postcode.charAt(4) == '_';
+    boolean validLength = postcode.length() == 7 || postcode.length() == 8;
+
+    return startsWithEH && hasUnderScore && validLength;
   }
 }

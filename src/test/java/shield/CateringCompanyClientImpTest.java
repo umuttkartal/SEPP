@@ -57,7 +57,7 @@ public class CateringCompanyClientImpTest {
   public void testCateringCompanyNewRegistration() {
     Random rand = new Random();
     String name = String.valueOf(rand.nextInt(10000));
-    String postCode = String.valueOf(rand.nextInt(10000));
+    String postCode = "EH9_1LT";
 
     assertTrue(client.registerCateringCompany(name, postCode));
     assertTrue(client.isRegistered());
@@ -73,19 +73,18 @@ public class CateringCompanyClientImpTest {
 
     assertTrue(client.registerCateringCompany(name, postCode));
     assertTrue(client.isRegistered());
-    assertFalse(client.registerCateringCompany(name, postCode));
+    assertTrue(client.registerCateringCompany(name, postCode));
   }
 
   @Test
   public void testCateringCompanyOrderFlow() {
     Random rand = new Random();
     String CHI = generateCHI();
-    // int orderNumber = 0; // Can't just pick any random number
     String statusPacked = "packed";
     String statusDispatched = "dispatched";
     String statusDelivered = "delivered";
     String name = String.valueOf(rand.nextInt(10000));
-    String postCode = "EH16_5AY";
+    String postCode = "EH9_1LT";
     shieldedInd.registerShieldingIndividual(CHI);
     client.registerCateringCompany(name, postCode);
     shieldedInd.pickFoodBox(2);
@@ -98,13 +97,13 @@ public class CateringCompanyClientImpTest {
   }
 
   @Test
-  public void testSupermarketOrderWrongStatus() {
+  public void testCateringOrderWrongStatus() {
     Random rand = new Random();
-    String CHI = String.valueOf(rand.nextInt(10000));
+    String CHI = generateCHI();
     String statusDel = "delivered";
     String statusWrong = "wRoNg";
     String name = String.valueOf(rand.nextInt(10000));
-    String postCode = "EH16_5AY";
+    String postCode = "EH9_1LT";
     shieldedInd.registerShieldingIndividual(CHI);
     client.registerCateringCompany(name, postCode);
     shieldedInd.pickFoodBox(2);
@@ -112,5 +111,16 @@ public class CateringCompanyClientImpTest {
     int orderNumber = shieldedInd.getOrderNumbers().iterator().next();
     assertTrue(client.updateOrderStatus(orderNumber, statusDel));
     assertFalse(client.updateOrderStatus(orderNumber, statusWrong));
+  }
+
+  @Test
+  public void testPostcodeValidation() {
+    assertTrue(client.isValidPostcodeFormat("EH9_1KT"));
+    assertTrue(client.isValidPostcodeFormat("EH15_1KT"));
+    assertFalse(client.isValidPostcodeFormat("ST9_1LT"));
+    assertFalse(client.isValidPostcodeFormat("Not valid"));
+    assertFalse(client.isValidPostcodeFormat("EH9 1LT"));
+    assertFalse(client.isValidPostcodeFormat("eh9_1lt"));
+    assertFalse(client.isValidPostcodeFormat("EH9_1lT   A"));
   }
 }

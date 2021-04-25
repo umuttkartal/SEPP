@@ -11,6 +11,7 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.*;
 import static shield.Generators.generateCHI;
 
+
 /** */
 public class SupermarketClientImpTest {
   private static final String clientPropsFilename = "client.cfg";
@@ -81,7 +82,7 @@ public class SupermarketClientImpTest {
     String CHI = generateCHI();
     shieldedInd.registerShieldingIndividual(CHI);
     String name = String.valueOf(rand.nextInt(10000));
-    String postCode = String.valueOf(rand.nextInt(10000));
+    String postCode = "EH9_1LT";
     int orderNumber = rand.nextInt(10000);
     String statusPacked = "packed";
     String statusDispatched = "dispatched";
@@ -109,5 +110,16 @@ public class SupermarketClientImpTest {
     assertTrue(client.recordSupermarketOrder(CHI, orderNumber));
     assertTrue(client.updateOrderStatus(orderNumber, statusDel));
     assertFalse(client.updateOrderStatus(orderNumber, statusWrong));
+  }
+
+  @Test
+  public void testPostcodeValidation() {
+    assertTrue(client.isValidPostcodeFormat("EH9_1KT"));
+    assertTrue(client.isValidPostcodeFormat("EH15_1KT"));
+    assertFalse(client.isValidPostcodeFormat("ST9_1LT"));
+    assertFalse(client.isValidPostcodeFormat("Not valid"));
+    assertFalse(client.isValidPostcodeFormat("EH9 1LT"));
+    assertFalse(client.isValidPostcodeFormat("eh9_1lt"));
+    assertFalse(client.isValidPostcodeFormat("EH9_1lT   A"));
   }
 }
