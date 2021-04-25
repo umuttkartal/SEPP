@@ -1,9 +1,9 @@
 /** */
-
 package shield;
 
-import java.io.IOException;
 import shield.utils.Validators;
+
+import java.io.IOException;
 
 public class SupermarketClientImp implements SupermarketClient {
 
@@ -98,9 +98,9 @@ public class SupermarketClientImp implements SupermarketClient {
   }
 
   @Override
-  public boolean isValidPostcodeFormat(String postcode){
+  public boolean isValidPostcodeFormat(String postcode) {
     assert postcode.length() > 6;
-    boolean startsWithEH = "EH".equals(postcode.substring(0,2));
+    boolean startsWithEH = "EH".equals(postcode.substring(0, 2));
     boolean hasUnderScore = postcode.charAt(3) == '_' || postcode.charAt(4) == '_';
     boolean validLength = postcode.length() == 7 || postcode.length() == 8;
 

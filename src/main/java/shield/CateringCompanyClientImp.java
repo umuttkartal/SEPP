@@ -1,4 +1,7 @@
-/** */
+/**
+ * Class for a catering company This allows for a catering company to register itself and update
+ * orders that are sent to it
+ */
 
 package shield;
 
@@ -73,9 +76,9 @@ public class CateringCompanyClientImp implements CateringCompanyClient {
     return this.postCode;
   }
 
-  public boolean isValidPostcodeFormat(String postcode){
+  public boolean isValidPostcodeFormat(String postcode) {
     assert postcode.length() > 6;
-    boolean startsWithEH = "EH".equals(postcode.substring(0,2));
+    boolean startsWithEH = "EH".equals(postcode.substring(0, 2));
     boolean hasUnderScore = postcode.charAt(3) == '_' || postcode.charAt(4) == '_';
     boolean validLength = postcode.length() == 7 || postcode.length() == 8;
 
